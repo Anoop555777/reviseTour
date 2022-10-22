@@ -22,6 +22,15 @@ exports.getAllTours = (req, res) => {
   });
 };
 
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price)
+    return res
+      .status(400)
+      .json({ status: 'failed', message: 'Add data first to create tour' });
+
+  next();
+};
+
 exports.createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newDataSet = {
