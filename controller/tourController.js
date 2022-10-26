@@ -59,6 +59,7 @@ exports.getTour = async (req, res) => {
 
   try {
     const tour = await Tour.findById(id);
+    // it is equal to Tour.find({_id: id})
     res.status(200).json({
       status: 'success',
       data: {
@@ -72,12 +73,36 @@ exports.getTour = async (req, res) => {
   }
 };
 
-exports.updateTour = (req, res) => {
-  res
-    .status(200)
-    .json({ status: 'success', data: { tour: '<updated the tour>' } });
+exports.updateTour = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const tour = await Tour.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ status: 'failed', message: 'invalid failed required' });
+  }
 };
 
-exports.deleteTour = (req, res) => {
-  res.status(204).json({ status: 'success', data: null });
+exports.deleteTour = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await Tour.findByIdAndDelete(id);
+    res.status(204).json({ status: 'success', data: null });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ status: 'failed', message: 'invalid failed required' });
+  }
 };

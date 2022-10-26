@@ -7,7 +7,7 @@ const tourSchema = new mongoose.Schema({
     unique: true,
   },
   rating: { type: 'Number', default: 4.5 },
-  price: { type: 'String', required: [true, 'must give price a number'] },
+  price: { type: 'Number', required: [true, 'must give price a number'] },
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
