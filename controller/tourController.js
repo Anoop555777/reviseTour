@@ -1,8 +1,4 @@
-const fs = require('fs');
 const Tour = require('./../models/tourmodel');
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf8')
-);
 
 //{
 // only to check middleware but now in our data base schema we have validation so  no use of this
@@ -25,14 +21,21 @@ const tours = JSON.parse(
 //}
 
 //route handlers
-exports.getAllTours = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    result: tours.length,
-    data: {
-      tours,
-    },
-  });
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
+    res.status(200).json({
+      status: 'success',
+      result: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ status: 'failed', message: 'invalid failed required' });
+  }
 };
 
 exports.createTour = async (req, res) => {
@@ -51,12 +54,22 @@ exports.createTour = async (req, res) => {
   }
 };
 
-exports.getTour = (req, res) => {
-  const id = +req.params.id;
+exports.getTour = async (req, res) => {
+  const id = req.params.id;
 
-  const tour = tours[id];
-  // if (!tour) res.status(404).json({ status: 'failed', message: 'Invalid ID' });
-  res.status(200).json({ status: 'success', data: { tours: tour } });
+  try {
+    const tour = await Tour.findById(id);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ status: 'failed', message: 'invalid failed required' });
+  }
 };
 
 exports.updateTour = (req, res) => {
