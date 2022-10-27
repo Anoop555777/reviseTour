@@ -106,3 +106,4 @@ exports.deleteTour = async (req, res) => {
       .json({ status: 'failed', message: 'invalid failed required' });
   }
 };
+
