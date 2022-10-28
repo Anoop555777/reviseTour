@@ -23,7 +23,21 @@ const Tour = require('./../models/tourmodel');
 //route handlers
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    //filtering
+    const queryObj = { ...req.query };
+    const excludeField = ['page', 'sort', 'limit', 'field'];
+    excludeField.forEach((field) => delete queryObj[field]);
+
+    //advance filtering
+
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b{gte|gt|lte|le}\b/g,
+      (match) => `$${match}`
+    );
+
+    const query = Tour.find(JSON.parse(queryString));
+    const tours = await query;
     res.status(200).json({
       status: 'success',
       result: tours.length,
@@ -106,4 +120,3 @@ exports.deleteTour = async (req, res) => {
       .json({ status: 'failed', message: 'invalid failed required' });
   }
 };
-
