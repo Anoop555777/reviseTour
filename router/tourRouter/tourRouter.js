@@ -5,7 +5,11 @@ const router = express.Router();
 
 //only to check middleware
 // router.param('/:id', tourController.checkID);
-
+router.route(
+  '/top-5-cheap',
+  tourController.aliasTopTour,
+  tourController.getAllTours
+);
 router
   .route('/')
   .get(tourController.getAllTours)

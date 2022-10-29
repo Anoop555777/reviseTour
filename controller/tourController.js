@@ -21,6 +21,15 @@ const Tour = require('./../models/tourmodel');
 //}
 
 //route handlers
+
+exports.aliasTopTour = async (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = 'price';
+  req.query.field = 'name,price,duration,difficulty';
+
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
     //filtering
