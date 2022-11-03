@@ -10,6 +10,9 @@ router.route(
   tourController.aliasTopTour,
   tourController.getAllTours
 );
+
+router.route('/getToursStats').get(tourController.getToursStats);
+
 router
   .route('/')
   .get(tourController.getAllTours)
