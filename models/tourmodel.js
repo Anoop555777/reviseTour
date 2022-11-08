@@ -1,13 +1,18 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, 'A tour must have a valid name'],
-      unique: true,
+      unique: [true, 'A tour must have a unique name'],
       maxlength: [50, 'A tour name must be sort unique and easy to catch'],
       minlength: [5, 'A tour name must make sense'],
+      // validator: [
+      //   validator.isAlfha,
+      //   'the value must be string and no space in between',
+      // ],
     },
     duration: {
       type: Number,
@@ -34,7 +39,16 @@ const tourSchema = new mongoose.Schema(
     },
     ratingType: { type: Number, default: 0 },
     price: { type: Number, required: [true, 'must give price a number'] },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (value) {
+          //only work when new data is created not for update this keyword allows point to the current document
+          return value <= this.price / 2;
+        },
+        message: 'Discount price must be atmost 50%',
+      },
+    },
     summary: {
       type: String,
       required: [true, 'Summary must be required for tour'],
