@@ -2,7 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const tourRouter = require('./router/tourRouter/tourRouter');
 const userRouter = require('./router/userRouter/userRouter');
+const AppError = require('./utiles/appError');
 const app = express();
+const globalErrorHandler = require('./controller/errorController');
 
 //Middlewares
 app.use(express.json());
@@ -13,11 +15,9 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'failed',
-    message: `can't find the route for ${res.originalUrl}`,
-  });
-  next();
+  next(new AppError(404, `can't find the route for this ${req.originalUrl}`));
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;
