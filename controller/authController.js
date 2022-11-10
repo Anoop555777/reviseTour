@@ -1,4 +1,5 @@
 const catchAsync = require('./../utiles/catchAsync');
+const util = require('util');
 const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
 const AppError = require('./../utiles/appError');
@@ -36,4 +37,26 @@ exports.logIn = catchAsync(async (req, res, next) => {
   console.log(token);
 
   res.status(200).json({ status: 'success', token });
+});
+
+exports.protectedRoutes = catchAsync(async (req, res, next) => {
+  let token;
+  //1)take the token and check if the token exist
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) return next(new AppError(401, 'First please logIn'));
+
+  //2 verification of the this
+  const decoded = await util.promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET
+  );
+
+  console.log(decoded);
+  next();
 });
