@@ -34,7 +34,6 @@ exports.logIn = catchAsync(async (req, res, next) => {
   //3 generate the token
 
   const token = signToken(user._id);
-  console.log(token);
 
   res.status(200).json({ status: 'success', token });
 });
@@ -51,12 +50,33 @@ exports.protectedRoutes = catchAsync(async (req, res, next) => {
 
   if (!token) return next(new AppError(401, 'First please logIn'));
 
-  //2 verification of the this
+  //2 verification of the this token
   const decoded = await util.promisify(jwt.verify)(
     token,
     process.env.JWT_SECRET
   );
 
-  console.log(decoded);
+  //3 check if user is still exists
+  const freshUser = await User.findById(decoded.id).select('+role');
+
+  if (!freshUser)
+    return new AppError(401, "Token belong to the user don't exist anymore");
+
+  //4 check if the user have changed the password after logIn
+
+  if (freshUser.changePasswordAfter(decoded.iat))
+    return new AppError(401, 'user have change the password logIn again');
+
+  //next will grant excess to private routes
+  req.user = freshUser;
   next();
 });
+exports.restrict = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError(403, 'You are forbidden to delete tour'));
+    }
+
+    next();
+  };
+};

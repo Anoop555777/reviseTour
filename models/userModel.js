@@ -30,6 +30,13 @@ const userSchema = new mongoose.Schema({
       message: 'passwords must be matched',
     },
   },
+  passwordChangedAt: Date,
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'guide', 'lead-guide'],
+    default: 'user',
+    select: false,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -45,6 +52,16 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidateKey, userPassword);
+};
+
+userSchema.methods.changePasswordAfter = function (JWTTimeStamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = Number.parseInt(
+      this.passwordChangedAt.getTime() / 1000
+    );
+    return JWTTimeStamp < changedTimeStamp;
+  }
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
