@@ -12,12 +12,16 @@ const signToken = (id) => {
   });
 };
 
+const generateToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({ status: 'success', token });
+};
+
 exports.signUp = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const newUser = await User.create(req.body);
   const token = signToken(newUser._id);
-
-  res.status(201).json({ status: 'success', data: newUser, token });
+  generateToken(newUser, 201, res);
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {
@@ -34,10 +38,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
     return next(new AppError(401, 'enter correct email and password'));
 
   //3 generate the token
-
-  const token = signToken(user._id);
-
-  res.status(200).json({ status: 'success', token });
+  generateToken(user, 200, res);
 });
 
 exports.protectedRoutes = catchAsync(async (req, res, next) => {
@@ -145,9 +146,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //update changePasswordProperty for the user
 
   //sent the jwt token
-  const token = signToken(user._id);
-
-  res.status(200).json({ status: 'success', token });
+  generateToken(user, 200, res);
 });
 
 exports.updatepassword = catchAsync(async (req, res, next) => {
@@ -163,6 +162,5 @@ exports.updatepassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
-  const token = signToken(user._id);
-  res.status(200).json({ status: 'success', token });
+  generateToken(user, 200, res);
 });

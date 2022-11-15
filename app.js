@@ -3,8 +3,8 @@ const morgan = require('morgan');
 const tourRouter = require('./router/tourRouter/tourRouter');
 const userRouter = require('./router/userRouter/userRouter');
 const AppError = require('./utiles/appError');
-const app = express();
 const globalErrorHandler = require('./controller/errorController');
+const app = express();
 
 //Middlewares
 app.use(express.json());

@@ -12,6 +12,11 @@ router.patch(
   authController.protectedRoutes,
   authController.updatepassword
 );
+router.patch(
+  '/updateMe',
+  authController.protectedRoutes,
+  userController.userMe
+);
 router
   .route('/')
   .get(userController.getAllUsers)
