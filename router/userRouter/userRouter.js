@@ -17,6 +17,13 @@ router.patch(
   authController.protectedRoutes,
   userController.userMe
 );
+
+router.patch(
+  '/deleteMe',
+  authController.protectedRoutes,
+  userController.deleteMe
+);
+
 router
   .route('/')
   .get(userController.getAllUsers)

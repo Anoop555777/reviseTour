@@ -68,3 +68,8 @@ exports.deleteUser = (req, res) => {
     message: 'this route is yet not defined',
   });
 };
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.user._id);
+  res.status(204).json({ status: 'success' });
+});
