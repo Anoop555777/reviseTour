@@ -68,7 +68,7 @@ exports.createTour = catchAsync(async (req, res, next) => {
 exports.getTour = catchAsync(async (req, res, next) => {
   const id = req.params.id;
 
-  const tour = await Tour.findById(id);
+  const tour = await Tour.findById(id).populate('reviews');
   // it is equal to Tour.find({_id: id})
   if (!tour) {
     return next(new AppError(404, 'no tour found'));
