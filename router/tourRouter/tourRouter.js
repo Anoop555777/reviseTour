@@ -1,6 +1,8 @@
 const express = require('express');
 const tourController = require('../../controller/tourController');
 const authController = require('../../controller/authController');
+const reviewController = require('../../controller/reviewController');
+const reviewRouter = require('../reviewRouter');
 
 const router = express.Router();
 
@@ -29,5 +31,7 @@ router
     authController.restrict('admin', 'lead-guide'),
     tourController.deleteTour
   );
+
+router.use('/:tourid/review', reviewRouter);
 
 module.exports = router;
