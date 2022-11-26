@@ -19,13 +19,25 @@ router.route('/getMonthlyTour/:year').get(tourController.getMonthlyTour);
 router.route('/getToursStats').get(tourController.getToursStats);
 
 router
+  .route('/tour-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getTourWithin);
+
+router
   .route('/')
   .get(authController.protectedRoutes, tourController.getAllTours)
-  .post(tourController.createTour);
+  .post(
+    authController.protectedRoutes,
+    authController.restrict('admin', 'lead-guide'),
+    tourController.createTour
+  );
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protectedRoutes,
+    authController.restrict('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     authController.protectedRoutes,
     authController.restrict('admin', 'lead-guide'),

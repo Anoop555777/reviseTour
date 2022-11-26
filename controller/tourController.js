@@ -1,8 +1,7 @@
 const Tour = require('./../models/tourmodel');
-
 const catchAsync = require('./../utiles/catchAsync');
-
 const factory = require('./../controller/handlerFactory');
+const AppError = require('./../utiles/appError');
 //{
 // only to check middleware but now in our data base schema we have validation so  no use of this
 // exports.checkID = (req, res, next, val) => {
@@ -118,4 +117,13 @@ exports.getMonthlyTour = catchAsync(async (req, res, next) => {
       plan,
     },
   });
+});
+
+exports.getTourWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng)
+    return next(new AppError(400, 'please provide latitude and longitude'));
+
+  const tour = await Tour.find({});
 });

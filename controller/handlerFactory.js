@@ -19,6 +19,9 @@ exports.updateOne = (Model) =>
       new: true,
       runValidators: true,
     });
+    if (!doc) {
+      return next(new AppError(404, 'No document found with that ID'));
+    }
     res.status(200).json({
       status: 'success',
       data: {
@@ -68,7 +71,7 @@ exports.getAll = (Model) =>
         .limiting()
         .pagination();
 
-      const doc = await featuresApi.query;
+      const doc = await featuresApi.query.explain();
       res.status(200).json({
         status: 'success',
         result: doc.length,

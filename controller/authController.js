@@ -89,7 +89,9 @@ exports.restrict = (...roles) => {
   return (req, res, next) => {
     // you must select role in previous middleware because role are not selected in models
     if (!roles.includes(req.user.role)) {
-      return next(new AppError(403, 'You are forbidden to delete tour'));
+      return next(
+        new AppError(403, 'You are forbidden to do operation in this doc ')
+      );
     }
 
     next();
